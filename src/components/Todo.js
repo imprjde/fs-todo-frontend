@@ -104,15 +104,19 @@ const Todo = ({ loggedInuser, isAuth, setIsAuth, setLoggedInuser }) => {
 
   const handleDelete = async (id) => {
     try {
+      setIsLoading(true)
       let resp = await axios.delete(
         `https://fs-todo-backend.onrender.com/todos/${id}`
       );
       getTodos();
 
       if (resp.status === 201) {
+        setIsLoading(false)
         notifyDeleteTodo();
       }
-    } catch (error) {}
+    } catch (error) {
+      setIsLoading(false)
+    }
   };
 
   const handleView = (index) => {
