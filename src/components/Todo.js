@@ -26,6 +26,8 @@ const Todo = ({ loggedInuser, isAuth, setIsAuth, setLoggedInuser }) => {
   const [editIndex, setEditIndex] = useState(-1);
   const [shoWModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
   const inputRef = useRef();
 
   const getTodos = async () => {
@@ -53,6 +55,7 @@ const Todo = ({ loggedInuser, isAuth, setIsAuth, setLoggedInuser }) => {
     e.preventDefault();
     if (editIndex === -1) {
       try {
+        setAddLoading(true);
         const resp = await axios.post(
           "https://fs-todo-backend.onrender.com/todos",
           {
@@ -64,10 +67,14 @@ const Todo = ({ loggedInuser, isAuth, setIsAuth, setLoggedInuser }) => {
         if (resp) {
           getTodos();
           notifyAddTodo();
+          setAddLoading(false);
         }
-      } catch (error) {}
+      } catch (error) {
+        setAddLoading(false);
+      }
     } else {
       try {
+        setUpdateLoading(true);
         let resp = await axios.patch(
           `https://fs-todo-backend.onrender.com/todos/${ID}`,
           {
@@ -78,8 +85,11 @@ const Todo = ({ loggedInuser, isAuth, setIsAuth, setLoggedInuser }) => {
         getTodos();
         if (resp.status === 200) {
           notifyUpdateTodo();
+          setUpdateLoading(false);
         }
-      } catch (error) {}
+      } catch (error) {
+        setUpdateLoading(false);
+      }
     }
     setTodo("");
     setEditIndex(-1);
@@ -166,27 +176,34 @@ const Todo = ({ loggedInuser, isAuth, setIsAuth, setLoggedInuser }) => {
 
         <form
           onSubmit={addTodo}
-          className="relative  m-auto mt-20 justify-end flex h-10 w min-w-[200px]  w-[90%] md:w-[30%] "
+          className="relative m-auto mt-20 justify-end flex h-10 w min-w-[200px] w-[90%] md:w-[30%]"
         >
-          <button
-            type="submit"
-            className="!absolute right-1 top-1 z-10 select-none rounded bg-pink-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none peer-placeholder-shown:pointer-events-none peer-placeholder-shown:bg-blue-gray-500 peer-placeholder-shown:opacity-50 peer-placeholder-shown:shadow-none"
-            data-ripple-light="true"
-          >
-            {editIndex === -1 ? "Add Todo" : "Edit Todo"}
-          </button>
-          <input
-            ref={inputRef}
-            value={todo}
-            onChange={(e) => setTodo(e.target.value)}
-            className="peer text-white text-base font-semibold h-full w-full rounded-[7px] border border-blue-gray-200 bg-transparent px-3 py-2.5 pr-20 font-sans  text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
-            placeholder=""
-            required
-          />
-          <label className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-[11px]  leading-tight text-white text-base font-semibold text-blue-gray-400 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-pink-500 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-pink-500 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-pink-500 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-            Enter Todo...
-          </label>
+          <div className="relative w-full">
+            <input
+              ref={inputRef}
+              value={todo}
+              onChange={(e) => setTodo(e.target.value)}
+              className="peer text-white text-base font-semibold h-full w-full rounded-[7px] border border-white bg-transparent px-3 py-2.5 pr-20 font-sans text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-pink-500 focus:border-t-2 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder-white"
+              placeholder="Enter Todo..."
+              required
+            />
+            <button
+              disabled={addLoading || updateLoading}
+              type="submit"
+              className="absolute right-1 top-1 z-10 select-none rounded bg-pink-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none"
+              data-ripple-light="true"
+            >
+              {editIndex === -1
+                ? addLoading
+                  ? "Adding..."
+                  : "Add Todo"
+                : updateLoading
+                ? "Updating..."
+                : "Edit Todo"}
+            </button>
+          </div>
         </form>
+
         <div className="bg-pink-400 bg-opacity-50 m-auto  my-5 w-[90%] md:w-[52%] py-5 px-4 ">
           {todos && todos.length === 0 && !isLoading && (
             <div className=" text-white justify-center flex font-semibold text-xl">
