@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import ButtonLoader from "../Helpers/ButtonLoader";
+import { FaCopyright } from "react-icons/fa";
 
 export default function Signup() {
   const [signUpUser, setSignUpUser] = useState({});
@@ -205,6 +206,15 @@ export default function Signup() {
               Login Here
             </Link>
           </p>
+        </div>
+        <div className="flex m-auto justify-center items-center pt-10 ">
+          <span className="text-white text-lg  items-center font-bold mr-1">
+            <FaCopyright size={15} />{" "}
+          </span>
+          <span className="text-white mb-0.5 font-semibold items-center">
+            {" "}
+            Prajwal.dev
+          </span>
         </div>
       </div>
     </>

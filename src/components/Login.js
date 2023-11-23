@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import ButtonLoader from "../Helpers/ButtonLoader";
+import { FaCopyright } from "react-icons/fa";
 
 export default function Login({
   handleLogin,
@@ -127,6 +128,15 @@ export default function Login({
               Sign Up here
             </Link>
           </p>
+          <div className="flex m-auto justify-center items-center pt-10 ">
+            <span className="text-white text-lg  items-center font-bold mr-1">
+              <FaCopyright size={15} />{" "}
+            </span>
+            <span className="text-white mb-0.5 font-semibold items-center">
+              {" "}
+              Prajwal.dev
+            </span>
+          </div>
         </div>
       </div>
     </>
